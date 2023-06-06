@@ -30,12 +30,6 @@ def get_time():
 #测试路由
 @app.route('/test')
 def testRoute():
-    # Returning an api for showing in  reactjs
-    response_text, emotional_state = petBot.chat("我分手了");
-    reponseData['response_text'] = response_text
-    reponseData['emotional_state'] = emotional_state
-    print(reponseData['response_text'])
-    print(reponseData['emotional_state'])
     return {
         'Name': "geek",
         "Age": "22",
