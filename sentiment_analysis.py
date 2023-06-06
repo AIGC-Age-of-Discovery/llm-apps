@@ -11,33 +11,53 @@ from langchain.schema import SystemMessage, HumanMessage, AIMessage
 OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
 
-
-def get_emotional_state(response, labels_embedding, output_parser, input_text):
-    try:
-        output_dict = output_parser.parse(response.content)
-        response_text = output_dict["response"]
-        emotional_state = output_dict["emotional_state"]
-    except:
-        # 当output解析识别时进行处理
-        response_text = response.content  
-        emotional_state = ""
-        print("输出格式有误：", response_text)
+class ChatBot:
+    def __init__(self, labels, output_parser, chatbot):
+        self.labels_embedding = self.get_lebels_embedding(labels)
+        self.output_parser = output_parser
+        self.chatbot = chatbot
+        self.messages = []   # 对话信息
+        self.recoder = {}   # 对话记录
+        self.iter = 0       # 对话轮数
     
-    input_embedding = get_embedding(input_text + "," + emotional_state) # 根据输入句子和模型判断的类型进行分类
-    sims = np.array([cosine_similarity(input_embedding, labels_embedding[key]) for key in labels_embedding.keys()])
-    index = np.argmax(sims)
-    emotional_state = labels[index]
+    def get_lebels_embedding(self, labels):
+        labels_embedding = {}
+        for label in labels:
+            labels_embedding[label] = get_embedding(label)
+        return labels_embedding
+    
+    def chat(self, input_text):
+        self.messages.append(HumanMessage(content=input_text)) # 将人类信息加入上下文
+        response = self.chatbot(self.messages)  
+        response_text, emotional_state = self.get_emotional_state(response, input_text)
+        self.recoder[str(self.iter)] = {"回复": response_text, "情感配型": emotional_state}
+        self.iter += 1
+        self.messages.append(response)  # 将AI信息加入上下文
+        return response_text, emotional_state
+        
+    def get_emotional_state(self, response, input_text):
+        try:
+            output_dict = self.output_parser.parse(response.content)
+            response_text = output_dict["response"]
+            emotional_state = output_dict["emotional_state"]
+        except:
+            # 当output解析识别时进行处理
+            response_text = response.content  
+            emotional_state = ""
+            print("输出格式有误：", response_text)
+        
+        input_embedding = get_embedding(input_text + "," + emotional_state) # 根据输入句子和模型判断的类型进行分类
+        sims = np.array([cosine_similarity(input_embedding, self.labels_embedding[key]) for key in self.labels_embedding.keys()])
+        index = np.argmax(sims)
+        emotional_state = labels[index]
 
-    return response_text, emotional_state    
+        return response_text, emotional_state    
     
 
 if __name__ == "__main__":
    
    # 计算标签的embedding 
     labels = ["Happy", "Threaten", "Sad", "Dislike","Coquetry", "Mad","Awkward", "Like"]
-    labels_embedding = {}
-    for label in labels:
-        labels_embedding[label] = get_embedding(label)
 
     # 设置输出格式
     speak_schema = ResponseSchema(name="response", description="对话的输出")
@@ -55,8 +75,8 @@ if __name__ == "__main__":
     """
     prompt = ChatPromptTemplate.from_template(template)
     messages = prompt.format_messages(format_instructions=format_instructions)
-    print("输入prompt")
-    print(messages[0].content)
+    # print("输入prompt:")
+    # print(messages[0].content)
     # prompt = """
     # 你担任一只虚拟的宠物。
     # 1. 以很可爱的口吻与我对话。
@@ -65,35 +85,22 @@ if __name__ == "__main__":
     # 4. 你的第一句话是“你好啊！我是你可爱的虚拟宠物，我叫妮妮，很高兴和你见面呢！”。第一次输出只输出这一句话。
     # """
 
+    # 创建聊天机器人
+    chat = ChatOpenAI(temperature=0.1, openai_api_key=OPENAI_API_KEY)
+    petBot = ChatBot(labels, output_parser, chat) 
 
     # 开始对话
     print("开启对话，当输入stop时停止对话")
-    iter = 0  #  对话论数
-    recoder = {}  # 对话记录
-    chat = ChatOpenAI(temperature=0.0, openai_api_key=OPENAI_API_KEY)
+    print("="*20)
+    # 输入prompt 
+    response_text, emotional_state = petBot.chat(messages[0].content)
+    print(response_text)
+
     while True:
-        # 开始先自动回复
-        if iter == 0:  
-            response = chat(messages) 
-            response_text, emotional_state = get_emotional_state(response, labels_embedding, output_parser, input_text="")
-            recoder[str(iter)] = {"回复": response_text, "情感配型": emotional_state}
-            print("回复:{}, 情感配型:{}".format(response_text, emotional_state))
-            messages.append(response)
-            iter += 1
-       
-        # 获取用户输入 
         input_text = input("Input:")
         if input_text == "stop":
             print("结束对话！")
             break
-        messages.append(HumanMessage(content=input_text)) # 将人类信息加入上下文
-
-        # 获取用户情感
-        response = chat(messages)  
-        response_text, emotional_state = get_emotional_state(response, labels_embedding, output_parser, input_text)
-        recoder[str(iter)] = {"回复": response_text, "情感配型": emotional_state}
+        response_text, emotional_state = petBot.chat(input_text)
         print("回复:{}  情感配型:{}".format(response_text, emotional_state))
-
-        messages.append(response)  # 将AI信息加入上下文
-        iter += 1
 
