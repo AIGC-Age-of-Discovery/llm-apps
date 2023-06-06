@@ -12,6 +12,25 @@ OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
 
 
+def get_emotional_state(response, labels_embedding, output_parser, input_text):
+    try:
+        output_dict = output_parser.parse(response.content)
+        response_text = output_dict["response"]
+        emotional_state = output_dict["emotional_state"]
+    except:
+        # 当output解析识别时进行处理
+        response_text = response.content  
+        emotional_state = ""
+        print("输出格式有误：", response_text)
+    
+    input_embedding = get_embedding(input_text + "," + emotional_state) # 根据输入句子和模型判断的类型进行分类
+    sims = np.array([cosine_similarity(input_embedding, labels_embedding[key]) for key in labels_embedding.keys()])
+    index = np.argmax(sims)
+    emotional_state = labels[index]
+
+    return response_text, emotional_state    
+    
+
 if __name__ == "__main__":
    
    # 计算标签的embedding 
@@ -56,78 +75,25 @@ if __name__ == "__main__":
         # 开始先自动回复
         if iter == 0:  
             response = chat(messages) 
-            output_dict = output_parser.parse(response.content)
-            recoder[str(iter)] = output_dict
-            print("回复:{}, 情感配型:{}".format(output_dict['response'], output_dict['emotional_state']))
+            response_text, emotional_state = get_emotional_state(response, labels_embedding, output_parser, input_text="")
+            recoder[str(iter)] = {"回复": response_text, "情感配型": emotional_state}
+            print("回复:{}, 情感配型:{}".format(response_text, emotional_state))
             messages.append(response)
             iter += 1
-        
+       
+        # 获取用户输入 
         input_text = input("Input:")
         if input_text == "stop":
             print("结束对话！")
             break
-
         messages.append(HumanMessage(content=input_text)) # 将人类信息加入上下文
+
+        # 获取用户情感
         response = chat(messages)  
-        try:
-            output_dict = output_parser.parse(response.content)
-            response_text = output_dict["response"]
-            emotional_state = output_dict["emotional_state"]
-        except:
-            # 当output解析识别时进行处理
-            response_text = response.content  
-            emotional_state = ""
-            print("输出格式有误：", response_text)
-        
-        input_embedding = get_embedding(input_text + "," + emotional_state) # 根据输入句子和模型判断的类型进行分类
-        sims = np.array([cosine_similarity(input_embedding, labels_embedding[key]) for key in labels_embedding.keys()])
-        index = np.argmax(sims)
-        emotional_state = labels[index]
-        
+        response_text, emotional_state = get_emotional_state(response, labels_embedding, output_parser, input_text)
         recoder[str(iter)] = {"回复": response_text, "情感配型": emotional_state}
         print("回复:{}  情感配型:{}".format(response_text, emotional_state))
+
         messages.append(response)  # 将AI信息加入上下文
         iter += 1
 
-
-# template = """
-# 请分析下一句话的情感，并从以下短语中选择一个作为回答，可选择的短语有："开心"，"悲伤"，"平静"。
-
-# '''{input_text}'''
-# """
-# labels = ["开心", "悲伤", "平静"]
-
-# # 计算标签的embedding 
-# labels_embedding = {}
-# for label in labels:
-#     labels_embedding[label] = get_embedding(label)
-
-
-# if __name__ == "__main__":
-
-#     print("请输入句子进行情感分析，输入stop结束测试...")
-#     while True:
-#         input_text = input("Input:") 
-
-#         if input_text == "stop":
-#             print("退出测试！")
-#             break
-        
-#         # 创建prompt
-#         prompt = PromptTemplate(
-#             input_variables=["input_text"],
-#             template=template,
-#         )
-
-#         final_prompt = prompt.format(input_text=input_text)
-
-#         # 获取LLM回复
-#         ans = llm(final_prompt).strip()
-#         if ans == "":   # LLM有时返回为空字符串，将输入作为回复
-#             ans = input_text
-            
-#         # 计算回复与标签之间的相似性
-#         ans_embedding = get_embedding(ans)
-#         sims = np.array([cosine_similarity(ans_embedding, labels_embedding[key]) for key in labels_embedding.keys()])
-#         index = np.argmax(sims)
-#         print("Output:", labels[index])
