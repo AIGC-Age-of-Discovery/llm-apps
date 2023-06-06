@@ -11,6 +11,7 @@ import {
     SquaresPlusIcon,
      } from '@heroicons/react/24/outline'
     import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+import MessageBox from './output/MessageBox'
 
   const products = [
     { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
@@ -27,12 +28,55 @@ import {
 
 export default function Features() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-    const [data, setdata] = useState({
-        name: "",
-        age: 0,
-        date: "",
-        programming: "",
-    });
+    const [replyData,setReplyData] = useState({
+      emotional_state:'',
+      rawData:'',
+      response_text:'' 
+
+    })
+    const [form, setForm] = useState({
+      inputMess:'',
+      reply:'',
+      other:'',
+  });
+        
+  const handleChange =(e) =>{
+    setForm({...form, [e.target.name]:e.target.value })
+    console.log(form);
+}
+
+        
+    const handleSubmit = async(e)=>{
+      e.preventDefault();
+      const sendData = {'currentMessage':form.inputMess,
+                          'createdAt':new Date()};
+      if(form.inputMess){
+      
+      try {
+          const response = await fetch("http://localhost:5000/api/pet",{
+              method:"POST",
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(sendData)
+          })
+          // .then((res) =>
+          // res.json().then((data) => {
+          //     // Setting a data from api
+          //     console.log(data)
+          // }) );
+          if(response.ok){
+            const result = await response.json();
+            console.log(result)
+            setReplyData(result)
+          }
+      
+      } catch (error) {
+          console.log(error);
+      }
+    }
+  }
+
     // const getData =async()=>{
     //     try {
     //         const response =await fetch('http://127.0.0.1:5000/json',{
@@ -70,16 +114,16 @@ export default function Features() {
         </div>
         
        {/* 搜索框  */}
-        <div className="mt-12 flex gap-x-4 w-full">
-
-        <label htmlFor="email-address" className="sr-only">
-                Email address
+        <div >
+          
+          <form className="mt-12 flex gap-x-4 w-full" onSubmit={handleSubmit}>
+              <label htmlFor="email-address" className="sr-only">
+                Say something to your pet
               </label>
               <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
+                type="text"
+                name="inputMess"
+                onChange={handleChange}
                 required
                 className="w-full min-w-0 flex-auto rounded-md border-0 bg-/white5 px-3.5 py-2 text-black shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                 placeholder="Say something"
@@ -91,63 +135,10 @@ export default function Features() {
                 Send
               </button>
 
-              
+          </form>
         </div>
+        <MessageBox data={replyData}/>
         
-        <Popover.Group className="hidden lg:flex lg:gap-x-12">
-          <Popover className="relative">
-            <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
-              Icon
-              <ChevronDownIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
-            </Popover.Button>
-
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <Popover.Panel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
-                <div className="p-4">
-                  {products.map((item) => (
-                    <div
-                      key={item.name}
-                      className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
-                    >
-                      <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                        <item.icon className="h-6 w-6 text-gray-600 group-hover:text-indigo-600" aria-hidden="true" />
-                      </div>
-                      <div className="flex-auto">
-                        <a href={item.href} className="block font-semibold text-gray-900">
-                          {item.name}
-                          <span className="absolute inset-0" />
-                        </a>
-                        <p className="mt-1 text-gray-600">{item.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                  {callsToAction.map((item) => (
-                    <a
-                      key={item.name}
-                      href={item.href}
-                      className="flex items-center justify-center gap-x-2.5 p-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-100"
-                    >
-                      <item.icon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
-                      {item.name}
-                    </a>
-                  ))}
-                </div>
-              </Popover.Panel>
-            </Transition>
-          </Popover>
-
-        
-        </Popover.Group>
       </div>
     
   )

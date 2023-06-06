@@ -42,9 +42,39 @@ function Test() {
         }
     }
 
+    const getPetData = async()=>{
+        const sendData = {'currentMessage':"你能抱抱我吗",
+                            'createdAt':new Date()};
+        //data="你能抱抱我吗";
+        // Using fetch to fetch the api from
+        // flask server it will be redirected to proxy
+        try {
+            // const response =await fetch('http://localhost:8080/post/4',{
+            //     method:"POST",
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     }
+            // }) 
+            await fetch("http://localhost:5000/api/pet",{
+                method:"POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(sendData)
+            }).then((res) =>
+            res.json().then((data) => {
+                // Setting a data from api
+                console.log(data)
+            })
+        );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     // Using useEffect for single rendering
     useEffect(() => {
-        getData()
+        
         
     }, []);
  
@@ -59,6 +89,10 @@ function Test() {
                 <p>{data.programming}</p>
  
             </header>
+
+            <button onClick={getData}>normal data</button>
+            
+            <button onClick={getPetData}>chat data</button>
         </div>
     );
 }
