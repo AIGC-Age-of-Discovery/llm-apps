@@ -1,11 +1,11 @@
-import React,{ useState, useEffect } from 'react'
-import {BrowserRouter, Link, Route, Routes} from 'react-router-dom'
+import {BrowserRouter, Route, Routes} from 'react-router-dom'
 import './App.css'
 
 import Home from './components/Home'
 import {Layout} from './components/layout'
 import { Team } from './components'
 import Features from './components/Features'
+import Test from './components/Test'
 function App() {
 
   return (
@@ -18,6 +18,7 @@ function App() {
                 <Route path="/*" element={<Home/>}/>
                 <Route path="/team" element={<Team/>}/>
                 <Route path="/features" element={<Features/>}/>
+                <Route path="/test" element={<Test/>}/>
             </Routes>
 
         </Layout>
