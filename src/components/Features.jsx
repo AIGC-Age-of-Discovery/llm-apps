@@ -1,4 +1,4 @@
-import { ArrowPathIcon, CloudArrowUpIcon, FingerPrintIcon, LockClosedIcon } from '@heroicons/react/24/outline'
+import { ArrowPathIcon, FingerPrintIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
 import { Fragment } from 'react'
 import {demogif} from '../assets'
@@ -11,6 +11,7 @@ import {
     SquaresPlusIcon,
      } from '@heroicons/react/24/outline'
     import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
+
   const products = [
     { name: 'Analytics', description: 'Get a better understanding of your traffic', href: '#', icon: ChartPieIcon },
     { name: 'Engagement', description: 'Speak directly to your customers', href: '#', icon: CursorArrowRaysIcon },
@@ -55,24 +56,21 @@ export default function Features() {
   return (
    
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:text-center">
+        <div className="mx-auto max-w-2xl lg:text-center py-16">
           {/* <h2 className="text-base font-semibold leading-7 text-indigo-600">Deploy faster</h2> */}
         
-          {/* <img src="https://www.homevet.com.hk/wp-content/uploads/shutterstock_118058197.jpg" alt="图片" className="w-full h-auto object-cover rounded-xl" /> */}
-          <img src={demogif} alt="图片" className="w-full h-auto object-cover rounded-xl" />
-          {/* <img src={demogif} alt="图片" className="w-full h-auto object-cover rounded-xl" /> */}
+          {/* <img src="https://www.homevet.com.hk/wp-content/uploads/shutterstock_118058197.jpg" alt="图片" className="w-full h-auto object-cover rounded-xl" />*/}
+          <img src={demogif} alt="图片" className="w-full h-auto object-cover rounded-xl" /> 
+   
 
           {/* <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           Would like to find your partner here now? 
-          </p> */}
-          {/* <p className="mt-6 text-lg leading-8 text-gray-600">
-            Quis tellus eget adipiscing convallis sit sit eget aliquet quis. Suspendisse eget egestas a elementum
-            pulvinar et feugiat blandit at. In mi viverra elit nunc.
-          </p> */}
+          </p>  */}
+          
         </div>
         
        {/* 搜索框  */}
-        <div className="mt-12 flex gap-x-4 w-full py-8">
+        <div className="mt-12 flex gap-x-4 w-full">
 
         <label htmlFor="email-address" className="sr-only">
                 Email address
@@ -90,13 +88,13 @@ export default function Features() {
                 type="submit"
                 className="flex-none rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
-                Subscribe
+                Send
               </button>
 
               
         </div>
         
-        {/* <Popover.Group className="hidden lg:flex lg:gap-x-12">
+        <Popover.Group className="hidden lg:flex lg:gap-x-12">
           <Popover className="relative">
             <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
               Icon
@@ -149,7 +147,7 @@ export default function Features() {
           </Popover>
 
         
-        </Popover.Group> */}
+        </Popover.Group>
       </div>
     
   )

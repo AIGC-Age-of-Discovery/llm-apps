@@ -6,6 +6,7 @@ import {Layout} from './components/layout'
 import { Team } from './components'
 import Features from './components/Features'
 import Test from './components/Test'
+import { PetConditions } from './components/output'
 function App() {
 
   return (
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/team" element={<Team/>}/>
                 <Route path="/features" element={<Features/>}/>
                 <Route path="/test" element={<Test/>}/>
+                <Route path="/petemoji" element={<PetConditions/>}/>
             </Routes>
 
         </Layout>
