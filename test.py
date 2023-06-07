@@ -8,7 +8,7 @@ from langchain.output_parsers import StructuredOutputParser
 from openai.embeddings_utils import get_embedding, cosine_similarity
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
 
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
 
 
