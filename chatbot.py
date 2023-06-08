@@ -45,7 +45,10 @@ class ChatBot:
 
         # 创建聊天机器人
         chat = ChatOpenAI(temperature=0.1, openai_api_key=OPENAI_API_KEY)
+<<<<<<< HEAD
+=======
 
+>>>>>>> 9d4734828a32c63e5db36e6e5af46acc469caee4
         self.labels_embedding = self.get_lebels_embedding(self.labels)
         self.output_parser = output_parser
         self.chatbot = chat
