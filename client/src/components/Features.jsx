@@ -100,7 +100,7 @@ export default function Features() {
         <div >
           
           <form className="mt-6 flex gap-x-4 w-full" onSubmit={handleSubmit}>
-              <label htmlFor="email-address" className="sr-only">
+              <label htmlFor="email-address" className="sr-only text-black">
                 Say something to your pet
               </label>
               <input
@@ -108,7 +108,7 @@ export default function Features() {
                 name="inputMess"
                 onChange={handleChange}
                 required
-                className="w-full min-w-0 flex-auto rounded-md border-0 bg-/white5 px-3.5 py-2 text-black shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                className="w-full min-w-0 flex-auto rounded-md border-0 bg-sky-200 px-3.5 py-2 text-black shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                 placeholder="Say something"
               />
               <button

@@ -19,7 +19,7 @@ import sad_1 from './gif/sad_1/3f122c34c3657f3-1.gif'
 import sad_2 from './gif/sad_2/502b16ba3c5c194.gif'
 import sad_3 from './gif/sad_3/75611133f751867-1.gif'
 import threaten_1 from './gif/threaten_1/0e5dedcd3a5591f.gif'
-
+import switchEffect from './switch.gif'
 
 export {
     demogif,
@@ -41,5 +41,6 @@ export {
     sad_2,
     sad_3,
     threaten_1,
+    switchEffect
 
 }

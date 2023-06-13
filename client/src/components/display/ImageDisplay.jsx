@@ -1,5 +1,5 @@
 import { Carousel } from 'antd';
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {awkward_1,awkward_2,awkward_3,
     coquetry_1,
     coquetry_2,
@@ -17,7 +17,7 @@ import {awkward_1,awkward_2,awkward_3,
     sad_1,
     sad_2,
     sad_3,
-    threaten_1,} from '../../assets'
+    threaten_1,switchEffect} from '../../assets'
 
 // 动态渲染数量
 const petData={
@@ -40,15 +40,44 @@ const petData={
         like_2,
         like_3,]
 };
-const ImageDisplay = ({emoType}) => (
+function getRandomIntInclusive(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min; //含最大值，含最小值
+  }
+
+
+const ImageDisplay = ({emoType}) => {
+    const [loading, setLoading] = useState(true);
+    const [showB, setShowB] = useState(true); 
+    useEffect(()=>(
+        clearTimeout(tempTimer)
+        
+    ),[])
+    const tempTimer=setTimeout(() => {
+        setLoading(false);
+    }, 800) 
+    return (
   <Carousel effect="fade">
     <div>
       <h3 className="w-full h-auto object-cover rounded-xl">
         {/* <img src={awkward_1} alt="图片" className=" w-full h-auto object-cover rounded-xl" /> */}
-          {emoType}
-        {petData[emoType]?.map((item)=>(
+           当前状态: {emoType}
+          
+          {/* 遍历出所有的表情 */}
+        {/* {petData[emoType]?.map((item)=>(
             <img key='1' src={item} alt="图片" className=" w-full h-auto object-cover rounded-xl" />
-        ))}
+        ))} */}
+
+            
+            
+            
+            {/* 随机显示出一种表情 */}
+            {loading ? <img key='2' src={switchEffect} alt="图片" className=" w-full h-auto object-cover rounded-xl" /> :
+            <img key='1' src={petData[emoType][getRandomIntInclusive(0,petData[emoType].length-1)]} alt="图片" className=" w-full h-auto object-cover rounded-xl" />
+            }
+             
+             
       </h3>
     </div>
     {/* <div>
@@ -64,6 +93,7 @@ const ImageDisplay = ({emoType}) => (
       </h3>
     </div> */}
     
-  </Carousel>
-);
+    </Carousel>
+    )
+};
 export default ImageDisplay;
