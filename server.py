@@ -2,7 +2,8 @@
 from flask import Flask,request
 import datetime
 from flask_cors import CORS, cross_origin
-from sentiment_analysis import resDict, ChatBot, labels, output_parser, chat, messages
+# from sentiment_analysis import resDict, ChatBot, labels, output_parser, chat, messages
+from chatbot import ChatBot
 
 x = datetime.datetime.now()
 
@@ -53,8 +54,10 @@ def get_reponseMessage():
 # Running app
 if __name__ == '__main__':
     # 启动聊天机器人
-    petBot = ChatBot(labels, output_parser, chat)
-    response_text, emotional_state = petBot.chat(messages[0].content)
+    # petBot = ChatBot(labels, output_parser, chat)
+    petBot = ChatBot(mbti_iter=3)
+    petBot.start()
+    # response_text, emotional_state = petBot.chat(messages[0].content)
     app.run(debug=True)
 
 

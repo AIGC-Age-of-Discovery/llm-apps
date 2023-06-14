@@ -13,6 +13,9 @@ from langchain.schema import SystemMessage, HumanMessage, AIMessage
 OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
 
+
+serverRun = False
+
 class ChatBot:
     def __init__(self, mbti_iter):
 
@@ -154,6 +157,12 @@ class ChatBot:
         print("mbti: {}".format(self.mbti_state))
         self.messages[0] = HumanMessage(content=prompt)
 
+    def get_currentResponse(self, inputText):
+        response_text, emotional_state = self.chat(inputText)
+        resDict = {response_text, emotional_state}
+
+        return resDict
+        
 
 if __name__ == "__main__":
    
