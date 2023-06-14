@@ -10,7 +10,7 @@ from langchain.output_parsers import StructuredOutputParser
 from openai.embeddings_utils import get_embedding, cosine_similarity
 from langchain.schema import SystemMessage, HumanMessage, AIMessage
 
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = "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"
 openai.api_key = OPENAI_API_KEY
 
 
@@ -106,7 +106,7 @@ class ChatBot:
         self.recoder[str(self.iter)] = {"回复": response_text, "情感配型": emotional_state}
         self.iter += 1
         
-        if self.iter > self.mbti_iter and self.mbti_state is None: # 测试mbti性格
+        if self.iter > 1 and (self.iter - 1) % self.mbti_iter == 0: # 测试mbti性格
             mbti_thread = Thread(target=ChatBot.get_mbti_state, args=(self,))
             mbti_thread.start()
 
@@ -134,19 +134,20 @@ class ChatBot:
    
     def get_mbti_state(self):
         mbti_messages = []
-        user_inputs = '\n'.join(self.recoder_input[1:])
+        user_inputs = '\n'.join(self.recoder_input[-self.mbti_iter:])
         self.mbti_prompt = self.mbti_prompt + "\n对话消息：\n" + user_inputs
         mbti_messages.append(HumanMessage(content=self.mbti_prompt))
         response = self.mbti_chat(mbti_messages)
         output_dict = self.mbti_output_parser.parse(response.content)
 
         # 从返回获取mbti性格
-        state = output_dict['attitude'][0] + \
-                output_dict['perceiving'][0] + \
-                output_dict['judging'][0] + \
-                output_dict['lifestyle'][0]
+        state = [output_dict['attitude'][0],
+                output_dict['perceiving'][0],
+                output_dict['judging'][0],
+                output_dict['lifestyle'][0]]
         if output_dict['perceiving'][0] == 'I':
             state[1] = 'N'
+        state = ''.join(state)
         
         self.mbti_state  = state        
         # 修改原始prompt，添加mbti性格
